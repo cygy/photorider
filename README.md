@@ -1,4 +1,4 @@
-![Photo Rider](https://github.com/cygy/photorider/raws/appicon.png)
+![Photo Rider](https://raw.githubusercontent.com/cygy/photorider/master/PhotoRider/Assets.xcassets/AppIcon.appiconset/appicon-60%403x.png)
 
 # Photo Rider
 
