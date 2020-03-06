@@ -12,8 +12,8 @@ import CoreData
 
 protocol LocationSaverProtocol {
     // Start the job of saving location and photos to the device.
-    func start(withLocationPublisher locationPublisher: AnyPublisher<LocationCoordinate?, Never>, andPhotosPublisher photosPublisher: AnyPublisher<LocationPhoto, Never>)
+    func start(withLocationPublisher locationPublisher: AnyPublisher<LocationCoordinate?, Never>, andPhotosPublisher photosPublisher: AnyPublisher<LocationPhoto, Never>) throws
 
     // Delete all the locations saved to the device.
-    func deleteAllLocations()
+    func deleteAllLocations() throws
 }

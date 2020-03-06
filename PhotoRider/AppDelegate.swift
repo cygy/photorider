@@ -35,8 +35,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Get the publisher for all the downloaded photos of the locations.
         let photoPublisher = self.photoDownloader.photo.eraseToAnyPublisher()
         
-        self.locationSaver.context = context
-        self.locationSaver.start(withLocationPublisher: locationPublisher, andPhotosPublisher: photoPublisher)
+        do {
+            self.locationSaver.context = context
+            try self.locationSaver.start(withLocationPublisher: locationPublisher, andPhotosPublisher: photoPublisher)
+        } catch {
+            debugPrint("AppDelegate: can not start the LocationSaver service.")
+            return false
+        }
+        
         self.photoDownloader.start(withPublisher: locationPublisher)
         
         AppDelegate.state.locationTracker = self.locationTracker

@@ -20,7 +20,9 @@ import UIKit
  The PhotoDownloader must be available across the application so it implements the singleton pattern.
  */
 
-class PhotoDownloader: PhotoDownloaderProtocol {
+// MARK: - PhotoDownloader Class
+
+class PhotoDownloader {
     
     // MARK: - Properties
     
@@ -32,10 +34,6 @@ class PhotoDownloader: PhotoDownloaderProtocol {
     fileprivate var requestSubs = Set<AnyCancellable>()
     fileprivate let downloadedPhotos = PassthroughSubject<LocationPhoto, Never>()
     
-    var photo: AnyPublisher<LocationPhoto, Never> {
-        return downloadedPhotos.eraseToAnyPublisher()
-    }
-    
     // The screen width is used to select the photos with an appropriate size.
     var screenWidth = Int(UIScreen.main.bounds.width)
     
@@ -44,51 +42,6 @@ class PhotoDownloader: PhotoDownloaderProtocol {
     
     deinit {
         self.locationSub?.cancel()
-    }
-    
-    
-    // MARK: - Public methods
-    
-    func start(withPublisher publisher: AnyPublisher<LocationCoordinate?, Never>) {
-        self.locationSub = publisher.sink {[unowned self] locationCoordinate in
-            guard let locationCoordinate = locationCoordinate else {
-                return
-            }
-                
-            self.downloadPhoto(from: locationCoordinate);
-        }
-    }
-    
-    func deleteAllPhotos(withCompletion completion: ((Error?) -> Void)?) {
-        // The photos are deleted in the background queue to not block the UI thread.
-        DispatchQueue.global(qos: .background).async {
-            let documentsUrl =  FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-
-            do {
-                let fileURLs = try FileManager.default.contentsOfDirectory(at: documentsUrl,
-                                                                            includingPropertiesForKeys: nil,
-                                                                            options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
-                for fileURL in fileURLs {
-                    try FileManager.default.removeItem(at: fileURL)
-                }
-                
-                debugPrint("PhotoDownloader: deleted \(fileURLs.count) photos.")
-                
-                if let completion = completion {
-                    DispatchQueue.main.async {
-                        completion(nil)
-                    }
-                }
-            } catch {
-                debugPrint("PhotoDownloader: can not delete downloaded photo, error \(error)")
-                
-                if let completion = completion {
-                    DispatchQueue.main.async {
-                        completion(error)
-                    }
-                }
-            }
-        }
     }
     
     
@@ -173,5 +126,57 @@ class PhotoDownloader: PhotoDownloaderProtocol {
         }
         
         downloadTask.resume()
+    }
+}
+
+
+// MARK: - PhotoDownloaderProtocol
+
+extension PhotoDownloader: PhotoDownloaderProtocol {
+    
+    var photo: AnyPublisher<LocationPhoto, Never> {
+        return self.downloadedPhotos.eraseToAnyPublisher()
+    }
+    
+    func start(withPublisher publisher: AnyPublisher<LocationCoordinate?, Never>) {
+        self.locationSub = publisher.sink { [unowned self] locationCoordinate in
+            guard let locationCoordinate = locationCoordinate else {
+                return
+            }
+                
+            self.downloadPhoto(from: locationCoordinate)
+        }
+    }
+    
+    func deleteAllPhotos(withCompletion completion: ((Error?) -> Void)?) {
+        // The photos are deleted in the background queue to not block the UI thread.
+        DispatchQueue.global(qos: .background).async {
+            let documentsUrl =  FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+
+            do {
+                let fileURLs = try FileManager.default.contentsOfDirectory(at: documentsUrl,
+                                                                            includingPropertiesForKeys: nil,
+                                                                            options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
+                for fileURL in fileURLs {
+                    try FileManager.default.removeItem(at: fileURL)
+                }
+                
+                debugPrint("PhotoDownloader: deleted \(fileURLs.count) photos.")
+                
+                if let completion = completion {
+                    DispatchQueue.main.async {
+                        completion(nil)
+                    }
+                }
+            } catch {
+                debugPrint("PhotoDownloader: can not delete downloaded photo, error \(error)")
+                
+                if let completion = completion {
+                    DispatchQueue.main.async {
+                        completion(error)
+                    }
+                }
+            }
+        }
     }
 }

@@ -20,20 +20,22 @@ import CoreData
  The LocationSaver must be available across the application so it implements the singleton pattern.
  */
 
-class LocationSaver: LocationSaverProtocol {
+// MARK: - LocationSaver Class
+
+class LocationSaver {
     
     // MARK: - Properties
     
     fileprivate var locationSub: AnyCancellable? {
-           didSet {
-               oldValue?.cancel()
-           }
-       }
+        didSet {
+            oldValue?.cancel()
+        }
+    }
     fileprivate var photosSub: AnyCancellable? {
-           didSet {
-               oldValue?.cancel()
-           }
-       }
+        didSet {
+            oldValue?.cancel()
+        }
+    }
     
     public var context: NSManagedObjectContext?
     
@@ -44,13 +46,16 @@ class LocationSaver: LocationSaverProtocol {
         self.locationSub?.cancel()
         self.photosSub?.cancel()
     }
+}
+
+
+// MARK: - LocationSaverProtocol
+
+extension LocationSaver: LocationSaverProtocol {
     
-    
-    // MARK: - Public methods
-    
-    func start(withLocationPublisher locationPublisher: AnyPublisher<LocationCoordinate?, Never>, andPhotosPublisher photosPublisher: AnyPublisher<LocationPhoto, Never>) {
+    func start(withLocationPublisher locationPublisher: AnyPublisher<LocationCoordinate?, Never>, andPhotosPublisher photosPublisher: AnyPublisher<LocationPhoto, Never>) throws {
         guard let context = self.context else {
-            fatalError("LocationSaver: can not start saving locations and photos without defining a NSManagedObjectContext object.")
+            throw LocationSaverError.undefinedContext
         }
         
         // Saves the locations received by the publisher.
@@ -101,9 +106,9 @@ class LocationSaver: LocationSaverProtocol {
             }
     }
     
-    func deleteAllLocations() {
+    func deleteAllLocations() throws {
         guard let context = self.context else {
-            return
+            throw LocationSaverError.undefinedContext
         }
         
         context.perform {

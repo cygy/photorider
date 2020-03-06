@@ -40,8 +40,13 @@ class ApplicationState {
     public func stop() {
         UserDefaults.standard.set(false, forKey: ApplicationState.UserDefaultsStartedKey)
         self.locationTracker?.stop()
-        self.locationSaver?.deleteAllLocations()
         self.photoDownloader?.deleteAllPhotos(withCompletion: nil)
+        
+        do {
+            try self.locationSaver?.deleteAllLocations()
+        } catch {
+            debugPrint("ApplicationState: can not delete the locations, error: \(error)")
+        }
     }
     
     public func isStarted() -> Bool {

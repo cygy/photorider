@@ -18,8 +18,4 @@ enum LocationTrackerError: Error {
     // The use of the location services by the application was denied by the user.
     // The user must allow the application the use of the location services in the application settings.
     case unauthorized
-    
-    // The authorization to use the location services by the application was already requested.
-    // The authorization modal will not be displayed again.
-    case authorizationAlreadyRequested
 }

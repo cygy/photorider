@@ -27,25 +27,52 @@ import Combine
  The LocationTracker must be available across the application so it implements the singleton pattern.
  */
 
-class LocationTracker: NSObject, CLLocationManagerDelegate, LocationTrackerProtocol {
+// MARK: - LocationTracker Class
+
+class LocationTracker: NSObject {
     
     // MARK: - Properties
     
-    private let nativeLocationManager = CLLocationManager()
+    fileprivate var locationManager: LocationManagerProtocol
     
     // When the property 'active' is set to true
     // LocationTracker knows that the location must be updated.
-    private var active = false
+    private(set) var active = false
     
-    var distance = 100.0 {
+    public var distance = 100.0 {
         didSet {
-            nativeLocationManager.distanceFilter = distance
+            locationManager.distanceFilter = distance
         }
     }
     
     @Published fileprivate var _authorized = false
     @Published fileprivate var _locationServicesEnabled = false
     @Published fileprivate var _location: LocationCoordinate?
+    
+    
+    // MARK: - Lifecycle
+    
+    override convenience init() {
+        self.init(withLocationManager:CLLocationManager())
+    }
+    
+    init(withLocationManager locationManager: LocationManagerProtocol) {
+        self.locationManager = locationManager
+        
+        super.init()
+        
+        self.locationManager.pausesLocationUpdatesAutomatically = true // Ensure that is set to true to save power.
+        self.locationManager.activityType = .fitness
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        self.locationManager.distanceFilter = self.distance
+        self.locationManager.delegate = self
+    }
+}
+
+
+// MARK: - LocationTrackerProtocol
+
+extension LocationTracker: LocationTrackerProtocol {
     
     var authorized: Published<Bool>.Publisher {
         return $_authorized
@@ -59,35 +86,14 @@ class LocationTracker: NSObject, CLLocationManagerDelegate, LocationTrackerProto
         return $_location
     }
     
-    
-    // MARK: - Lifecycle
-    
-    override init() {
-        super.init()
-        
-        self.nativeLocationManager.pausesLocationUpdatesAutomatically = true // Ensure that is set to true to save power.
-        self.nativeLocationManager.activityType = .fitness
-        self.nativeLocationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-        self.nativeLocationManager.distanceFilter = self.distance
-        self.nativeLocationManager.delegate = self
-    }
-    
-    
-    // MARK: - Public functions
-    
     func requestAuthorization() throws {
         guard self._locationServicesEnabled else {
             debugPrint("LocationTracker: can not request authorization because the location services are disabled.")
             throw LocationTrackerError.locationServicesDisabled
         }
-        
-        guard CLLocationManager.authorizationStatus() == .notDetermined else {
-            debugPrint("LocationTracker: can not request authorization because it was already requested.")
-            throw LocationTrackerError.authorizationAlreadyRequested
-        }
 
         debugPrint("LocationTracker: request authorization.")
-        self.nativeLocationManager.requestWhenInUseAuthorization()
+        self.locationManager.requestWhenInUseAuthorization()
     }
     
     func start() throws {
@@ -105,24 +111,27 @@ class LocationTracker: NSObject, CLLocationManagerDelegate, LocationTrackerProto
         }
         
         debugPrint("LocationTracker: start the location tracking.")
-        self.nativeLocationManager.allowsBackgroundLocationUpdates = true
-        self.nativeLocationManager.startUpdatingLocation()
+        self.locationManager.allowsBackgroundLocationUpdates = true
+        self.locationManager.startUpdatingLocation()
     }
     
     func stop() {
         debugPrint("LocationTracker: stop the location tracking.")
-        self.nativeLocationManager.allowsBackgroundLocationUpdates = false
-        self.nativeLocationManager.stopUpdatingLocation()
+        self.locationManager.allowsBackgroundLocationUpdates = false
+        self.locationManager.stopUpdatingLocation()
         self.active = false
     }
-    
-    
-    // MARK: - CLLocationManagerDelegate functions
+}
+
+
+// MARK: - CLLocationManagerDelegate
+
+extension LocationTracker: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         debugPrint("LocationTracker: authorization status changed to \(status.rawValue)")
         
-        self._locationServicesEnabled = CLLocationManager.locationServicesEnabled()
+        self._locationServicesEnabled = (status != .denied && status != .restricted)
         self._authorized = (status == .authorizedAlways || status == .authorizedWhenInUse)
         
         guard self._authorized else {

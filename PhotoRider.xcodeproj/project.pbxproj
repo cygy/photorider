@@ -22,6 +22,10 @@
 		F148EF652402C43700808A5C /* PhotosViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F148EF642402C43700808A5C /* PhotosViewController.swift */; };
 		F148EF6B2402FE3200808A5C /* LocationTrackerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F148EF6A2402FE3200808A5C /* LocationTrackerError.swift */; };
 		F148EF6D2402FE8F00808A5C /* LocationTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F148EF6C2402FE8F00808A5C /* LocationTracker.swift */; };
+		F15825A3241273F1007B22DB /* LocationManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15825A2241273F1007B22DB /* LocationManagerProtocol.swift */; };
+		F15825AA2412990B007B22DB /* LocationManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15825A2241273F1007B22DB /* LocationManagerProtocol.swift */; };
+		F15825AC24129B5D007B22DB /* LocationManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15825A8241298B2007B22DB /* LocationManagerTest.swift */; };
+		F15825AF2412C53B007B22DB /* LocationSaverError.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15825AE2412C53B007B22DB /* LocationSaverError.swift */; };
 		F164D0AE2409903100C8A43B /* ApplicationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F164D0AD2409903100C8A43B /* ApplicationState.swift */; };
 		F16E0D0F2405B14E0044A59D /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16E0D0E2405B14E0044A59D /* Constants.swift */; };
 		F16E0D112405C20C0044A59D /* APITypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16E0D102405C20C0044A59D /* APITypes.swift */; };
@@ -75,6 +79,9 @@
 		F148EF642402C43700808A5C /* PhotosViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosViewController.swift; sourceTree = "<group>"; };
 		F148EF6A2402FE3200808A5C /* LocationTrackerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationTrackerError.swift; sourceTree = "<group>"; };
 		F148EF6C2402FE8F00808A5C /* LocationTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationTracker.swift; sourceTree = "<group>"; };
+		F15825A2241273F1007B22DB /* LocationManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManagerProtocol.swift; sourceTree = "<group>"; };
+		F15825A8241298B2007B22DB /* LocationManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManagerTest.swift; sourceTree = "<group>"; };
+		F15825AE2412C53B007B22DB /* LocationSaverError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationSaverError.swift; sourceTree = "<group>"; };
 		F164D0AD2409903100C8A43B /* ApplicationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationState.swift; sourceTree = "<group>"; };
 		F16E0D0E2405B14E0044A59D /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		F16E0D102405C20C0044A59D /* APITypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APITypes.swift; sourceTree = "<group>"; };
@@ -128,6 +135,7 @@
 				F164D0AD2409903100C8A43B /* ApplicationState.swift */,
 				F1D778D324103DF700E713E4 /* LocationSaverProtocol.swift */,
 				F1061AA9240425A600C36FCA /* LocationSaver.swift */,
+				F15825AD2412C52A007B22DB /* Types */,
 			);
 			path = PersistentData;
 			sourceTree = "<group>";
@@ -159,7 +167,7 @@
 				F148EF2A2402BCF200808A5C /* AppDelegate.swift */,
 				F148EF2C2402BCF200808A5C /* SceneDelegate.swift */,
 				F16E0D0E2405B14E0044A59D /* Constants.swift */,
-				F148EF682402FE0B00808A5C /* Managers */,
+				F148EF682402FE0B00808A5C /* Services */,
 				F148EF672402F5D700808A5C /* ViewControllers */,
 				F148EF662402F5C400808A5C /* Storyboards */,
 				F148EF362402BCF500808A5C /* Assets.xcassets */,
@@ -215,14 +223,14 @@
 			path = ViewControllers;
 			sourceTree = "<group>";
 		};
-		F148EF682402FE0B00808A5C /* Managers */ = {
+		F148EF682402FE0B00808A5C /* Services */ = {
 			isa = PBXGroup;
 			children = (
 				F1061AA82404254600C36FCA /* PersistentData */,
 				F1061AA524041D9B00C36FCA /* Photos */,
 				F148EF692402FE1500808A5C /* Location */,
 			);
-			path = Managers;
+			path = Services;
 			sourceTree = "<group>";
 		};
 		F148EF692402FE1500808A5C /* Location */ = {
@@ -230,11 +238,45 @@
 			children = (
 				F1D778D124103C8A00E713E4 /* LocationTrackerProtocol.swift */,
 				F148EF6C2402FE8F00808A5C /* LocationTracker.swift */,
+				F15825A1241273CE007B22DB /* Manager */,
+				F1D695B82412734800DCB589 /* Types */,
+				F15825AB24129B12007B22DB /* Test */,
+			);
+			path = Location;
+			sourceTree = "<group>";
+		};
+		F15825A1241273CE007B22DB /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+				F15825A2241273F1007B22DB /* LocationManagerProtocol.swift */,
+			);
+			path = Manager;
+			sourceTree = "<group>";
+		};
+		F15825AB24129B12007B22DB /* Test */ = {
+			isa = PBXGroup;
+			children = (
+				F15825A8241298B2007B22DB /* LocationManagerTest.swift */,
+			);
+			path = Test;
+			sourceTree = "<group>";
+		};
+		F15825AD2412C52A007B22DB /* Types */ = {
+			isa = PBXGroup;
+			children = (
+				F15825AE2412C53B007B22DB /* LocationSaverError.swift */,
+			);
+			path = Types;
+			sourceTree = "<group>";
+		};
+		F1D695B82412734800DCB589 /* Types */ = {
+			isa = PBXGroup;
+			children = (
 				F148EF6A2402FE3200808A5C /* LocationTrackerError.swift */,
 				F1061AA32404172100C36FCA /* LocationCoordinate.swift */,
 				F19FD6292407D61C00CB75C1 /* LocationPhoto.swift */,
 			);
-			path = Location;
+			path = Types;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -368,11 +410,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F15825AC24129B5D007B22DB /* LocationManagerTest.swift in Sources */,
 				F1D778D224103C8A00E713E4 /* LocationTrackerProtocol.swift in Sources */,
 				F16E0D112405C20C0044A59D /* APITypes.swift in Sources */,
 				F1D778D424103DF700E713E4 /* LocationSaverProtocol.swift in Sources */,
 				F148EF352402BCF200808A5C /* photorider.xcdatamodeld in Sources */,
 				F16E0D0F2405B14E0044A59D /* Constants.swift in Sources */,
+				F15825A3241273F1007B22DB /* LocationManagerProtocol.swift in Sources */,
 				F1D778D024103A5C00E713E4 /* PhotoDownloaderProtocol.swift in Sources */,
 				F1061AAA240425A600C36FCA /* LocationSaver.swift in Sources */,
 				F148EF2F2402BCF200808A5C /* StartViewController.swift in Sources */,
@@ -383,6 +427,7 @@
 				F148EF2B2402BCF200808A5C /* AppDelegate.swift in Sources */,
 				F148EF2D2402BCF200808A5C /* SceneDelegate.swift in Sources */,
 				F148EF652402C43700808A5C /* PhotosViewController.swift in Sources */,
+				F15825AF2412C53B007B22DB /* LocationSaverError.swift in Sources */,
 				F164D0AE2409903100C8A43B /* ApplicationState.swift in Sources */,
 				F16E0D132405CACB0044A59D /* APIError.swift in Sources */,
 				F19FD62A2407D61C00CB75C1 /* LocationPhoto.swift in Sources */,
@@ -393,6 +438,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F15825AA2412990B007B22DB /* LocationManagerProtocol.swift in Sources */,
 				F148EF452402BCF600808A5C /* PhotoRiderTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
